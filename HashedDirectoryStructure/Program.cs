@@ -4,8 +4,11 @@ namespace HashedDirectoryStructure;
 
 internal class Program
 {
-    const int MIN_COUNT = 97;
-    const int MAX_COUNT = 207;
+    //const int MIN_COUNT = 94;
+    //const int MAX_COUNT = 215;
+    const int MIN_COUNT = 800;
+    const int MAX_COUNT = 1200;
+
     static void Main(string[] args)
     {
         TestNewGuid();
@@ -14,9 +17,11 @@ internal class Program
     }
 
     private static void TestNewGuid()
-    {        // Dictionary to count occurrences of each path
+    {        
+        // Dictionary to count occurrences of each path
         Dictionary<string, int> counter = new Dictionary<string, int>();
-        int iterations = 10_000_000; // 10 million iterations
+        //int iterations = 10_000_000; // 10 million iterations
+        int iterations = 65_536_000; // 65.536 million iterations
 
         for (int i = 1; i <= iterations; i++)
         {
