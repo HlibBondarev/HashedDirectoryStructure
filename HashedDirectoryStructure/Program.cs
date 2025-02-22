@@ -46,18 +46,6 @@ internal class Program
         TestGuidDistribution(fileNames, minCount, maxCount);
 
         Console.ReadKey();
-        Console.WriteLine();
-    }
-
-    // Generates an array of random file name strings based on GUIDs.
-    private static string[] GenerateFileNames(int count)
-    {
-        string[] fileNames = new string[count];
-        for (int i = 0; i < count; i++)
-        {
-            fileNames[i] = Guid.NewGuid().ToString();
-        }
-        return fileNames;
     }
 
     // Processes the array of file names and outputs a count for each derived path.
@@ -68,20 +56,7 @@ internal class Program
 
         foreach (string fileName in fileNames)
         {
-            int hash = GetHashCodeString(fileName);
-            int mask = 255;
-            int firstDir = hash & mask;
-            int secondDir = (hash >> 8) & mask;
-
-            // Build the path similar to Java's File.separator and String.format("%02x", value)
-            string path = new StringBuilder()
-                .Append(Path.DirectorySeparatorChar)
-                .Append(firstDir.ToString("x2"))
-                .Append(Path.DirectorySeparatorChar)
-                .Append(secondDir.ToString("x2"))
-                .ToString();
-
-            // Increment the count for this path
+            string path = CreatePathFromFileName(fileName);
             if (counter.ContainsKey(path))
             {
                 counter[path]++;
@@ -92,7 +67,6 @@ internal class Program
             }
         }
 
-        // Display the results; pause if the number of paths is less than minCount or greater than maxCount.
         int count = 0;
         foreach (var key in counter.Keys)
         {
@@ -101,14 +75,13 @@ internal class Program
             if (counter[key] < minCount || counter[key] >= maxCount)
             {
                 Console.WriteLine("Press any key to continue...");
-                // throw new ArgumentOutOfRangeException("The number of paths is less than minCount or greater than maxCount");
                 Console.ReadKey();
             }
         }
+
         Console.WriteLine("Test complete.");
     }
 
-    // This method replicates the Java hashCode() algorithm for strings.
     private static int GetHashCodeString(string s)
     {
         int h = 0;
@@ -120,6 +93,33 @@ internal class Program
             }
         }
         return h;
+    }
+
+    private static string CreatePathFromFileName(string fileName)
+    {
+        int hash = GetHashCodeString(fileName);
+        int mask = 255;
+        int firstDir = hash & mask;
+        int secondDir = (hash >> 8) & mask;
+
+        // Build the path using the directory separator and formatting each byte as two-digit hexadecimal.
+        return new StringBuilder()
+            .Append(Path.DirectorySeparatorChar)
+            .Append(firstDir.ToString("x2"))
+            .Append(Path.DirectorySeparatorChar)
+            .Append(secondDir.ToString("x2"))
+            .ToString();
+    }
+
+    // Generates an array of random file name strings based on GUIDs.
+    private static string[] GenerateFileNames(int count)
+    {
+        string[] fileNames = new string[count];
+        for (int i = 0; i < count; i++)
+        {
+            fileNames[i] = Guid.NewGuid().ToString();
+        }
+        return fileNames;
     }
 
     private static string[] GetCoverImageIds()
